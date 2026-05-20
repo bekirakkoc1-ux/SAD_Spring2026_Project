@@ -1,36 +1,35 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Öğrenci Kulübü Yönetimi</title>
+    <title>Student Club Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Sadece giriş yapıldığında kulüp panelini göstereceğiz */
         #dashboard { display: none; }
     </style>
 </head>
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Öğrenci Kulübü Yönetim Sistemi</h1>
+    <h1 class="text-center mb-4">Student Club Management System</h1>
 
     <div id="auth-section" class="card mx-auto" style="max-width: 400px;">
         <div class="card-body">
-            <h5 class="card-title text-center" id="auth-title">Giriş Yap</h5>
+            <h5 class="card-title text-center" id="auth-title">Login</h5>
             <form id="auth-form">
                 <div class="mb-3">
-                    <label class="form-label">Kullanıcı Adı</label>
+                    <label class="form-label">Username</label>
                     <input type="text" id="username" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Şifre</label>
+                    <label class="form-label">Password</label>
                     <input type="password" id="password" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" id="auth-btn">Giriş</button>
+                <button type="submit" class="btn btn-primary w-100" id="auth-btn">Login</button>
             </form>
             <div class="text-center mt-3">
-                <a href="#" id="toggle-auth" onclick="toggleAuthMode()">Hesabın yok mu? Kayıt Ol</a>
+                <a href="#" id="toggle-auth" onclick="toggleAuthMode()">Don't have an account? Register</a>
             </div>
             <div id="auth-message" class="text-danger mt-2 text-center"></div>
         </div>
@@ -38,16 +37,16 @@
 
     <div id="dashboard">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Kulüplerim</h3>
-            <button class="btn btn-danger" onclick="logout()">Çıkış Yap</button>
+            <h3>My Clubs</h3>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
         
         <div class="card mb-4">
             <div class="card-body">
                 <form id="club-form" class="d-flex gap-2">
-                    <input type="text" id="club-name" class="form-control" placeholder="Kulüp Adı" required>
-                    <input type="text" id="club-desc" class="form-control" placeholder="Açıklama" required>
-                    <button type="submit" class="btn btn-success">Ekle</button>
+                    <input type="text" id="club-name" class="form-control" placeholder="Club Name" required>
+                    <input type="text" id="club-desc" class="form-control" placeholder="Description" required>
+                    <button type="submit" class="btn btn-success">Add</button>
                 </form>
             </div>
         </div>

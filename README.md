@@ -1,29 +1,29 @@
-# Öğrenci Kulübü Yönetim Sistemi (SAD Projesi)
+# Student Club Management System (SAD Project)
 
-Bu proje, Sistem Analizi ve Tasarımı dersi için geliştirilmiş web tabanlı bir CRUD uygulamasıdır. Kullanıcıların kendilerine ait öğrenci kulüplerini oluşturabildiği, listeleyebildiği, güncelleyebildiği ve silebildiği bir sistemdir.
+This project is a web-based CRUD application developed for the System Analysis and Design course. It is a system where users can create, read, update, and delete their own student clubs.
 
-## Kullanılan Teknolojiler
+## Technologies Used
 * **Frontend:** Vanilla Javascript (SPA), HTML, Bootstrap
 * **Backend:** Node.js, Express.js
-* **Veritabanı:** SQLite
-* **Güvenlik:** JWT (JSON Web Token), bcryptjs
-* **Test:** Jest
-* **Dokümantasyon:** Swagger UI
+* **Database:** SQLite
+* **Security:** JWT (JSON Web Token), bcryptjs
+* **Testing:** Jest
+* **Documentation:** Swagger UI
 
-## Kurulum ve Çalıştırma Adımları
+## Setup and Execution Steps
 
-1. Proje dosyalarını bilgisayarınıza indirin.
-2. Terminali proje dizininde açın ve gerekli paketleri yüklemek için şu komutu çalıştırın:
+1. Download the project files to your local machine.
+2. Open the terminal in the project directory and run the following command to install the required packages:
    \`npm install\`
-3. Sistemi başlatmak için şu komutu çalıştırın:
+3. Run the following command to start the server:
    \`node server.js\`
-4. Tarayıcınızda \`http://localhost:3000\` adresine giderek uygulamayı kullanabilirsiniz.
+4. Open your browser and navigate to \`http://localhost:3000\` to use the application.
 
-## API ve Dokümantasyon
-Sistemde interaktif bir Swagger dokümantasyonu bulunmaktadır. API uç noktalarını incelemek ve test etmek için sunucu çalışırken şu adrese gidebilirsiniz:
+## API and Documentation
+The system includes interactive API documentation using Swagger. To explore and test the API endpoints, start the server and navigate to:
 * **Swagger UI:** \`http://localhost:3000/api-docs\`
 
-## Proje Gereksinimleri ve Karşılanan Kriterler
-* **JWT ve Veri İzolasyonu:** Sistemde kayıt ve giriş mekanizması vardır. Her kullanıcı sadece kendi oluşturduğu kulüpleri görebilir ve yönetebilir.
-* **İş Mantığı ve Test:** Veritabanı ve iş mantığı (business logic) Controller katmanına ayrılarak modüler bir yapı kurulmuş ve Jest ile birim testi (Unit Test) yazılmıştır (\`npm test\` ile çalıştırılabilir).
-* **SPA:** Önyüz tamamen Vanilla JS ile sayfa yenilenmeden (fetch API) çalışmaktadır.
+## Project Requirements and Satisfied Criteria
+* **JWT and Data Isolation:** The system includes a registration and login mechanism. Each user can only view and manage the clubs they have created.
+* **Business Logic and Testing:** Database operations and business logic are separated into the Controller layer to establish a modular structure. A unit test is written using Jest (can be executed with \`npm test\`).
+* **SPA:** The frontend operates entirely with Vanilla JS using asynchronous API calls (fetch API) without requiring full page reloads.
