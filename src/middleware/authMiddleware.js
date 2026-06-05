@@ -1,20 +1,30 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-module.exports = (req, res, next) => {
-    // İstek başlığından (header) token'ı alıyoruz
-    const token = req.header('Authorization');
-    
+const verifyToken = (req, res, next) => {
+    // Tarayıcılar bazen "Bearer token_buraya" şeklinde gönderir
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
     if (!token) {
-        return res.status(401).json({ error: 'Erişim reddedildi. Lütfen giriş yapın.' });
+        return res.status(403).json({ message: 'Token bulunamadı, yetkisiz erişim.' });
     }
 
     try {
-        // "Bearer [token]" formatından sadece token kısmını ayırıyoruz
-        const verified = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET);
-        req.user = verified; // Kullanıcı bilgilerini (id, username) req objesine ekliyoruz
-        next(); // Geçişe izin ver
-    } catch (error) {
-        res.status(400).json({ error: 'Geçersiz veya süresi dolmuş token.' });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'gizli_anahtar');
+        req.user = decoded; // id, username, role
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Geçersiz veya süresi dolmuş token.' });
     }
 };
+
+const authorizeRoles = (...allowedRoles) => {
+    return (req, res, next) => {
+        if (!req.user || !allowedRoles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'Bu işlem için yetkiniz bulunmamaktadır.' });
+        }
+        next();
+    };
+};
+
+module.exports = { verifyToken, authorizeRoles };

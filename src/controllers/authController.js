@@ -3,8 +3,11 @@ const jwt = require('jsonwebtoken');
 const db = require('../db/database');
 require('dotenv').config();
 
+// =========================================================================
+// 1. KULLANICI KAYIT ETME (REGISTER)
+// =========================================================================
 exports.register = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
     
     if (!username || !password) {
         return res.status(400).json({ error: "Kullanıcı adı ve şifre zorunlu." });
@@ -12,8 +15,10 @@ exports.register = async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
+        // Eğer dışarıdan rol gönderilmezse (veya manipüle edilirse) varsayılan 'student' olur.
+        const userRole = role || 'student';
         
-        db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, hashedPassword], function(err) {
+        db.run(`INSERT INTO users (username, password, role) VALUES (?, ?, ?)`, [username, hashedPassword, userRole], function(err) {
             if (err) {
                 return res.status(400).json({ error: "Bu kullanıcı adı zaten alınmış olabilir." });
             }
@@ -24,6 +29,9 @@ exports.register = async (req, res) => {
     }
 };
 
+// =========================================================================
+// 2. KULLANICI GİRİŞİ (LOGIN)
+// =========================================================================
 exports.login = (req, res) => {
     const { username, password } = req.body;
 
@@ -36,12 +44,20 @@ exports.login = (req, res) => {
             return res.status(401).json({ error: "Geçersiz kullanıcı adı veya şifre." });
         }
 
+        // Bcrypt şifre çözümleme karşılaştırması
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ error: "Geçersiz kullanıcı adı veya şifre." });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '2h' });
-        res.json({ message: "Giriş başarılı.", token });
+        // Kullanıcı rolünü JWT payload içerisine ekleyerek ara katmanların okumasını sağlıyoruz
+        const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role }, 
+            process.env.JWT_SECRET || 'gizli_anahtar', 
+            { expiresIn: '2h' }
+        );
+        
+        // Ön yüzün yakalayabilmesi için role bilgisini json içinde de dönüyoruz
+        res.json({ message: "Giriş başarılı.", token, role: user.role });
     });
 };

@@ -1,29 +1,59 @@
 const clubController = require('./clubController');
+const db = require('../db/database');
 
-// Veritabanını sahte (mock) olarak ayarlıyoruz ki test sırasında gerçek veritabanı etkilenmesin
+// SQLite veritabanı işlemlerini mock'luyoruz (sahte test verisi üretiyoruz)
 jest.mock('../db/database', () => ({
-    run: jest.fn(),
-    all: jest.fn(),
-    get: jest.fn()
+    run: jest.fn((query, params, callback) => {
+        // Eğer callback varsa, hata olmadan çalışmış gibi tetikle
+        if (typeof params === 'function') params();
+        else if (typeof callback === 'function') callback(null);
+    })
 }));
 
 describe('Kulüp İş Mantığı (Business Logic) Testleri', () => {
-    it('Kulüp adı boş gönderildiğinde 400 hatası dönmeli', () => {
-        // Sahte (Mock) İstek (Request) ve Cevap (Response) objeleri oluşturuyoruz
-        const req = { 
-            body: { name: '', description: 'Gizli kulüp' }, 
-            user: { id: 1 } 
+    let req, res;
+
+    beforeEach(() => {
+        // Her testten önce req ve res nesnelerini sıfırlıyoruz
+        req = {
+            body: {},
+            user: { id: 1, username: 'testuser', role: 'student' } // Mock kullanıcı
         };
-        const res = { 
-            status: jest.fn().mockReturnThis(), 
-            json: jest.fn() 
+        res = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        };
+    });
+
+    test('Yeni kulüp isteği başarılı şekilde oluşturulmalı', () => {
+        req.body = {
+            name: 'Yazılım Kulübü',
+            description: 'Kodlama ve projeler üzerine odaklı topluluk.',
+            capacity: 50
         };
 
-        // Kontrolcü fonksiyonumuzu çalıştırıyoruz
-        clubController.createClub(req, res);
+        // Yeni güncellediğimiz fonksiyon adını çağırıyoruz: createClubRequest
+        clubController.createClubRequest(req, res);
 
-        // Beklentilerimiz: Status 400 olmalı ve doğru hata mesajı dönmeli
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith(
+            expect.objectContaining({
+                message: expect.stringContaining('admin onayına gönderildi')
+            })
+        );
+    });
+
+    test('Geçersiz durum bilgisi gönderildiğinde admin onayı 400 hatası dönmeli', () => {
+        req.body = {
+            clubId: 1,
+            status: 'INVALID_STATUS' // 'approved' veya 'rejected' olmalıydı
+        };
+
+        clubController.reviewClubStatus(req, res);
+
         expect(res.status).toHaveBeenCalledWith(400);
-        expect(res.json).toHaveBeenCalledWith({ error: "Kulüp adı zorunludur." });
+        expect(res.json).toHaveBeenCalledWith({
+            message: 'Geçersiz durum bilgisi.'
+        });
     });
 });

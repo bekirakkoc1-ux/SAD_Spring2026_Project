@@ -3,59 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Club Management</title>
+    <title>Student Club Management System (V2)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         #dashboard { display: none; }
+        .role-badge { font-size: 0.85rem; padding: 0.4em 0.8em; }
     </style>
 </head>
 <body class="bg-light">
 
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Student Club Management System</h1>
+<div class="container mt-5 pb-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-primary">Student Club Management</h1>
+        <p class="text-muted">Advanced Role-Based Club Governance System</p>
+    </div>
 
-    <div id="auth-section" class="card mx-auto" style="max-width: 400px;">
-        <div class="card-body">
-            <h5 class="card-title text-center" id="auth-title">Login</h5>
+    <div id="auth-section" class="card mx-auto shadow-sm" style="max-width: 400px;">
+        <div class="card-body p-4">
+            <h5 class="card-title text-center fw-bold mb-3" id="auth-title">Sign In</h5>
             <form id="auth-form">
                 <div class="mb-3">
                     <label class="form-label">Username</label>
-                    <input type="text" id="username" class="form-control" required>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" required>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" id="auth-btn">Login</button>
+                <button type="submit" class="btn btn-primary w-100 fw-bold" id="auth-btn">Login</button>
             </form>
             <div class="text-center mt-3">
-                <a href="#" id="toggle-auth" onclick="toggleAuthMode()">Don't have an account? Register</a>
+                <a href="#" id="toggle-auth" class="text-decoration-none" onclick="toggleAuthMode()">Don't have an account? Register</a>
             </div>
-            <div id="auth-message" class="text-danger mt-2 text-center"></div>
+            <div id="auth-message" class="text-danger mt-2 text-center small fw-bold"></div>
         </div>
     </div>
 
     <div id="dashboard">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>My Clubs</h3>
-            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        <div class="card card-body shadow-sm mb-4 d-flex flex-row justify-content-between align-items-center bg-white border-0">
+            <div>
+                <span class="fs-5 fw-semibold text-secondary">Welcome, <span id="welcome-username" class="text-dark fw-bold">User</span></span>
+                <span id="user-role-badge" class="badge bg-info text-dark role-badge ms-2">Student</span>
+            </div>
+            <button class="btn btn-outline-danger btn-sm fw-bold" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
         </div>
-        
-        <div class="card mb-4">
+
+        <div id="admin-panel" class="card shadow-sm mb-4 border-warning" style="display: none;">
+            <div class="card-header bg-warning bg-opacity-25 text-warning-dark fw-bold">
+                <i class="bi bi-shield-lock-fill me-2"></i> Admin Panel: New Club Creation Approvals
+            </div>
             <div class="card-body">
-                <form id="club-form" class="d-flex gap-2">
-                    <input type="text" id="club-name" class="form-control" placeholder="Club Name" required>
-                    <input type="text" id="club-desc" class="form-control" placeholder="Description" required>
-                    <button type="submit" class="btn btn-success">Add</button>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Club Name</th>
+                                <th>Description</th>
+                                <th>Max Capacity</th>
+                                <th>Requested By</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-pending-clubs">
+                            <tr><td colspan="5" class="text-muted text-center py-3">No pending club requests.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="president-panel" class="card shadow-sm mb-4 border-success" style="display: none;">
+            <div class="card-header bg-success bg-opacity-10 text-success fw-bold">
+                <i class="bi bi-people-fill me-2"></i> Club President Panel: Student Membership Requests
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Target Club</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="president-pending-students">
+                            <tr><td colspan="3" class="text-muted text-center py-3">No pending student join requests.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-header bg-white fw-bold text-secondary">
+                <i class="bi bi-plus-circle-fill me-1 text-success"></i> Request / Create a New Club
+            </div>
+            <div class="card-body">
+                <form id="club-form" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" id="club-name" class="form-control" placeholder="Club Name" required>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" id="club-desc" class="form-control" placeholder="Brief Description" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" id="club-capacity" class="form-control" placeholder="Capacity" min="1" value="50" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100 fw-bold">Submit Request</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div class="row" id="clubs-container">
-            </div>
+        <h4 class="fw-bold mb-3 text-secondary"><i class="bi bi-grid-fill me-2"></i>Active Student Clubs</h4>
+        <div class="row g-4" id="clubs-container"></div>
     </div>
 </div>
 
 <script src="app.js"></script>
+<script>
+    let isLoginMode = true;
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        const title = document.getElementById('auth-title');
+        const btn = document.getElementById('auth-btn');
+        const toggleLink = document.getElementById('toggle-auth');
+
+        if (isLoginMode) {
+            title.innerText = 'Sign In';
+            btn.innerText = 'Login';
+            toggleLink.innerText = "Don't have an account? Register";
+        } else {
+            title.innerText = 'Create Account';
+            btn.innerText = 'Register';
+            toggleLink.innerText = 'Already have an account? Login';
+        }
+    }
+</script>
 </body>
 </html>
