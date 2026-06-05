@@ -1,3 +1,42 @@
+# Dependency directories (Bağımlılıklar - npx/npm ile yüklenen kütüphaneler)
 node_modules/
+jspm_packages/
+web_components/
+
+# Local database file (Yerel SQLite Veritabanı - Her çalıştığında güncellendiği için yüklenmemeli)
+src/db/club_management.db
+
+# Environment variables (Gizli anahtarlar, JWT_SECRET ve Port bilgileri)
 .env
-club_management.db
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Operating System Files (Sistem Dosyaları)
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows specific
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+# IDEs and Text Editors (Kod Editörü Ayarları)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Testing (Test çıktısı logları)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.jest/
+coverage/
